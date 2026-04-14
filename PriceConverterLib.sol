@@ -3,7 +3,7 @@ pragma solidity ^0.8.30;
 
 import {AggregatorV3Interface} from "@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol";
 
-library PriceConverter {
+library PriceConverterLib {
     function getPrice() internal view returns (uint256) {
         // Address: 0x694AA1769357215DE4FAC081bf1f309aDC325306
         // ABI ✅
