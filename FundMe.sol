@@ -20,6 +20,13 @@ contract FundMe {
         i_owner = msg.sender;
     }
 
+    receive() external payable {
+        fund();
+    }
+    fallback() external payable {
+        fund();
+    }
+
     function fund() public payable {
         // Allow users to send funds into the contract
         // Have a minimum ammout to sent
@@ -28,26 +35,21 @@ contract FundMe {
         funders.push(msg.sender);
         addressToAmountFunded[msg.sender] += msg.value;
     }
-
-    function withdraw(uint256 _withdrawAmount) public onlyOwner {
-        uint256 balance = addressToAmountFunded[msg.sender];
-        if(balance < _withdrawAmount) {revert InsufficientBalance();}
-        addressToAmountFunded[msg.sender] -= _withdrawAmount;
-        /*
+ 
+    function withdraw() public onlyOwner {
         for(uint256 funderIndex = 0; funderIndex < funders.length; funderIndex++) {
             address funder = funders[funderIndex];
             addressToAmountFunded[funder] = 0;
         }
         // reset the array
         funders = new address[](0);
-        */
         // 3 ways to withdraw: transfer, send, call
         /*
         payable(msg.sender).transfer(address(this).balance);
         bool sendSuccess = payable(msg.sender).send(address(this).balance);
         require(sendSuccess, "Send failed");
         */
-        (bool callSuccess,) = payable(msg.sender).call{value: _withdrawAmount}("");
+        (bool callSuccess,) = payable(msg.sender).call{value: address(this).balance}("");
         if(!callSuccess) {revert CallFailed();}
     }
     
